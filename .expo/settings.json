@@ -1,0 +1,8 @@
+{
+  "urlRandomness": "xm-kec",
+  "hostType": "lan",
+  "lanType": "ip",
+  "dev": true,
+  "minify": false,
+  "https": false
+}
