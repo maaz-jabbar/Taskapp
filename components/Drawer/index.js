@@ -3,9 +3,10 @@ import { Text, View, Image, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { signOut } from "../../redux/actions/action";
 import { signInWithFacebook } from "../../redux/actions/action";
-import { Images } from "../../utils"
+import { Images } from "../../utils";
 
-import {Colors} from '../../constants/color'
+import ElevatedView from "react-native-elevated-view";
+import { Colors } from "../../constants/color";
 import {
   Entypo,
   MaterialCommunityIcons,
@@ -59,34 +60,32 @@ class Drawer extends React.Component {
   }
 
   render() {
-    const iconSize = 20
+    const iconSize = 20;
     return (
       <View style={styles.container}>
-        <View
-          style={styles.upperContainer}
-        >
+        <View style={styles.upperContainer}>
           {!this.props.downloadURL ? (
-            <Image
-              source={Images.no_photo_available}
-              style={styles.image}
-            />
+            <Image source={Images.no_photo_available} style={styles.image} />
           ) : (
             <Image
               source={{ uri: this.props.downloadURL }}
               style={styles.image}
             />
           )}
-            <View style={styles.username}>
-              <Text
-                style={{ fontSize: 20, color: Colors.darkTheme.textPrimary, fontWeight: "bold" }}
-              >
-                {this.props.username}
-              </Text>
-              <Text style={{ fontSize: 15, color: "white" }}>
-                {this.props.email}
-              </Text>
-            </View>
-          
+          <View style={styles.username}>
+            <Text
+              style={{
+                fontSize: 20,
+                color: Colors.darkTheme.textPrimary,
+                fontWeight: "bold"
+              }}
+            >
+              {this.props.username}
+            </Text>
+            <Text style={{ fontSize: 15, color: "white" }}>
+              {this.props.email}
+            </Text>
+          </View>
         </View>
         <View style={{ alignSelf: "stretch", padding: 10 }}>
           <View style={styles.screenContainer}>
@@ -100,7 +99,7 @@ class Drawer extends React.Component {
                     ? styles.activeBackgroundColor
                     : null
                 ]}
-                >
+              >
                 <Entypo
                   name="home"
                   size={iconSize}
@@ -163,7 +162,6 @@ class Drawer extends React.Component {
                   name="ios-notifications"
                   size={iconSize}
                   color={Colors.darkTheme.textPrimary}
-                  
                   style={{ marginLeft: 23, marginRight: 3 }}
                 />
                 <Text
@@ -176,19 +174,28 @@ class Drawer extends React.Component {
                 >
                   Notifications
                 </Text>
+                <ElevatedView elevation={10} style={styles.notiCountView}>
+                  <Text style={styles.notiCountText}>
+                    {this.props.count.length}
+                  </Text>
+                </ElevatedView>
               </View>
             </TouchableOpacity>
-              <TouchableOpacity onPress={()=>this.props.signOut(this.props.navigation)}>
-                <View style={styles.screenStyle}>
-                  <MaterialCommunityIcons
-                    name="logout"
-                    color={Colors.darkTheme.textPrimary}
-                    size={iconSize}
-                    style={{ marginLeft: 20 }}
-                    />
-                  <Text style={[styles.screenTextStyle,styles.unselected]}>Logout</Text>
-                </View>
-              </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.props.signOut(this.props.navigation)}
+            >
+              <View style={styles.screenStyle}>
+                <MaterialCommunityIcons
+                  name="logout"
+                  color={Colors.darkTheme.textPrimary}
+                  size={iconSize}
+                  style={{ marginLeft: 20 }}
+                />
+                <Text style={[styles.screenTextStyle, styles.unselected]}>
+                  Logout
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -201,12 +208,13 @@ function mapstate(state) {
     username: state.basicInfo.username,
     email: state.basicInfo.email,
     downloadURL: state.basicInfo.downloadURL,
-    activeItemKey: state.basicInfo.activeItemKey
+    activeItemKey: state.basicInfo.activeItemKey,
+    count: state.basicInfo.notifications
   };
 }
 function mapdispatch(dispatch) {
   return {
-    signOut: (nav) => {
+    signOut: nav => {
       dispatch(signOut(nav));
     },
     change: (name, email) => {
@@ -226,7 +234,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor : Colors.darkTheme.backgroundColor,
+    backgroundColor: Colors.darkTheme.backgroundColor
   },
   screenContainer: {
     paddingTop: 10,
@@ -255,22 +263,36 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkTheme.buttonColor,
     borderRadius: 5
   },
-  username:{
-    marginLeft:10
+  username: {
+    marginLeft: 10
   },
-  image:{
+  image: {
     height: 80,
     width: 80,
-    borderRadius: 80,
+    borderRadius: 80
   },
-  upperContainer:{
+  upperContainer: {
     alignSelf: "stretch",
     backgroundColor: Colors.darkTheme.primaryColor,
     paddingBottom: 15,
     paddingTop: 40,
     paddingLeft: 10,
-    flexDirection:'row',
-    alignItems:'center',
+    flexDirection: "row",
+    alignItems: "center"
     // justifyContent:'space-around'
+  },
+  notiCountView: {
+    position: "absolute",
+    right: 15,
+    backgroundColor: "white",
+    borderRadius: 25,
+    width: 25,
+    height: 25,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  notiCountText:{
+    color:Colors.darkTheme.buttonColor,
+    fontWeight:'bold'
   }
 });

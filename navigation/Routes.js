@@ -19,21 +19,18 @@ import Group from "../containers/Group";
 import GroupDetails from "../containers/GroupDetails";
 import { Colors } from "../constants/color";
 //Components
-import BottomBar from "../components/BottomBar";
 import Drawer from "../components/Drawer";
 const iconSize = 25
-const notificationNavigator = createStackNavigator({
-  Notifications: {
-    screen: Notifications,
-    navigationOptions: {
-      header: null
-    }
-  },
-})
+
 const stackNavigator = createStackNavigator(
   {
     Home: {
       screen: Home,
+      navigationOptions: {
+        header: null
+      }
+    },Notifications: {
+      screen: Notifications,
       navigationOptions: {
         header: null
       }
@@ -84,19 +81,12 @@ const bottom = createBottomTabNavigator(
         
       }
     },
-    Notifications:{
-      screen :notificationNavigator,
-      navigationOptions:{
-        tabBarIcon: <Ionicons name = "ios-notifications"  color={Colors.darkTheme.textPrimary} size={iconSize}/>,
-      }
-    },
   },
   {
     initialRouteName: "Groups",
     tabBarComponent: withCustomStyle({
       style: {
         backgroundColor: Colors.darkTheme.primaryColor,
-        // color: 'yellow'
       },
       backgroundViewStyle: {
         backgroundColor: Colors.darkTheme.buttonColor
@@ -107,7 +97,6 @@ const bottom = createBottomTabNavigator(
   {
     tabBarOptions: {
       activeTintColor: 'white',
-      // inactiveTintColor: 'yellow',
       showLabel: true,
       showIcon: true,
       indicatorStyle: {

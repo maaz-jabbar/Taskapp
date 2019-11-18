@@ -11,6 +11,7 @@ const INITIAL_STATES = {
   allUsers:[],
   imgUri:'',
   groups:[],
+  notifications:[],
 downloadURL:'',
 activeItemKey :'Home'
 };
@@ -34,7 +35,12 @@ export default function(state = INITIAL_STATES, action) {
 downloadURL:'',
 activeItemKey :'Home'
       }
-      
+      case "NOTIFICATIONS":
+        console.log(`dispatch hogya ${action.payload}`)
+        return{
+          ...state,
+          notifications:action.payload
+        }
     case 'ASSIGNED':
       var assignedTodos;
       assignedTodos.push(action.payload)

@@ -23,51 +23,11 @@ import {
 } from "../../redux/actions/action";
 
 class Notifications extends React.Component {
-  componentDidMount() {
-    if (this.props.uid) this.handlenotify();
-  }
-  componentDidUpdate(prevprops) {
-    if (prevprops.uid !== this.props.uid) {
-      if (this.props.uid) {
-        this.handlenotify();
-        this.setState({
-          loader: false
-        });
-      }
-    }
-  }
-  handlenotify = async () => {
-    try {
-      var ar = [];
-      const invitedArray = await getAllNotify(this.props.uid);
-      invitedArray.onSnapshot(async invitation => {
-        for (let i = 0; i < invitation.data().invited.length; i++) {
-          const singleGroup = await getAllGroups(invitation.data().invited[i]);
-          const comment = singleGroup.data();
-          comment.docref = singleGroup.id;
-          const getNamePromise = () =>
-            firebase
-              .firestore()
-              .collection("users")
-              .doc(comment.createdByUid)
-              .get();
-          const doc = await getNamePromise();
-          comment.sender = doc.data().name;
-          ar.push(comment);
-        }
-        this.setState({
-          invited: ar,
-          loader: false
-        });
-        ar = [];
-      });
-    } catch (e) {
-      alert(e);
-    }
-  };
+
+
   state = {
     invited: [],
-    loader: true
+    loader: false
   };
   render() {
     return (
@@ -83,12 +43,12 @@ class Notifications extends React.Component {
         {this.props.uid ? (
           !this.state.loader ? (
             <ScrollView style={{ alignSelf: "stretch", padding: 5, flex: 1 }}>
-              {this.state.invited.length ? (
-                this.state.invited.map((group, i) => {
+              {this.props.invited.length ? (
+                this.props.invited.map((group, i) => {
                   return (
-                    <ElevatedView elevation={5} style={styles.Notification}>
+                    <ElevatedView key={i} elevation={5} style={styles.Notification}>
                       <View
-                        key={i}
+                        
                         style={{ elevation: 1, padding: 10, margin: 10 }}
                       >
                         <View
@@ -170,7 +130,8 @@ class Notifications extends React.Component {
 
 function mapstate(state) {
   return {
-    uid: state.basicInfo.uid
+    uid: state.basicInfo.uid,
+    invited :state.basicInfo.notifications
   };
 }
 function mapdispatch(dispatch) {

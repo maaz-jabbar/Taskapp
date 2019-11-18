@@ -15,7 +15,9 @@ import {
   gettodos,
   createGroup,
   getGroups,
-  updateGroupInfo
+  updateGroupInfo,
+  getAllNotify,
+  getAllGroups,
 } from "../../redux/actions/action";
 import { addd } from "../../redux/actions/action";
 import { connect } from "react-redux";
@@ -29,11 +31,46 @@ import {
 import Modal from "react-native-modal";
 
 import CustomHeader from "../../components/Header";
+import firebase from "firebase";
+require('firebase/firestore')
 
 class Home extends React.Component {
+  handlenotify = async () => {
+    try {
+      var ar = [];
+      console.log(`getting notify with ${this.props.uid}`)
+      const invitedArray = await getAllNotify(this.props.uid);
+      invitedArray.onSnapshot(async invitation => {
+        for (let i = 0; i < invitation.data().invited.length; i++) {
+          const singleGroup = await getAllGroups(invitation.data().invited[i]);
+          const comment = singleGroup.data();
+          comment.docref = singleGroup.id;
+          const getNamePromise = () =>
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(comment.createdByUid)
+              .get();
+          const doc = await getNamePromise();
+          comment.sender = doc.data().name;
+          ar.push(comment);
+        }
+        console.log("!"+ ar)
+        this.props.notify(ar)
+        // this.setState({
+        //   invited: ar,
+        //   loader: false
+        // });
+        ar = [];
+      });
+    } catch (e) {
+      alert(e);
+    }
+  };
   async componentDidMount() {
     if (this.props.uid) {
       await this.props.getGroups(this.props.uid);
+      if (this.props.uid) this.handlenotify();
       console.log("did mount state" + this.props.groups);
       this.setState({
         uid: this.props.uid,
@@ -42,7 +79,6 @@ class Home extends React.Component {
       });
     }
   }
-
   static getDerivedStateFromProps(props, state) {
     if (props.uid) {
       return {
@@ -380,6 +416,9 @@ function mapdispatch(dispatch) {
     },
     updateGroupInfo: (docref, title, description, uid) => {
       dispatch(updateGroupInfo(docref, title, description, uid));
+    },
+    notify:(ar)=>{
+      dispatch({type:'NOTIFICATIONS', payload:ar})
     }
   };
 }
@@ -402,7 +441,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "absolute",
     right: 30,
-    bottom: 30
+    bottom: 30,
   },
   inputContainer: {
     backgroundColor: "#FFFFFF",
